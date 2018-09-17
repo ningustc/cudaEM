@@ -7,7 +7,6 @@
 #include "scan_simulator.cuh"
 #include "thickness_simulator.cuh"
 #include "iolib.hpp"
-#include "simulator.h"
 #include "rawdata_io.hpp"
 void direct_xyzreader(std::vector<cudaEM::Atom<float>> &atom_combined)
 {
@@ -20,7 +19,7 @@ void direct_xyzreader(std::vector<cudaEM::Atom<float>> &atom_combined)
 }
 void phonon_builder(std::vector<cudaEM::Atom<float>> &atom_combined)
 {
-	atom_combined.resize(6);
+	atom_combined.resize(3);
 	atom_combined[0].x = 0.0f;
 	atom_combined[0].y = 0.0f;
 
@@ -29,62 +28,46 @@ void phonon_builder(std::vector<cudaEM::Atom<float>> &atom_combined)
 
 	atom_combined[2].x = 6.0f;
 	atom_combined[2].y = 6.0f;
-
-	atom_combined[3].x = 0.0f;
-	atom_combined[3].y = 0.0f;
-
-	atom_combined[4].x = 3.0f;
-	atom_combined[4].y = 3.0f;
-
-	atom_combined[5].x = 6.0f;
-	atom_combined[5].y = 6.0f;
-	for (auto iatom = 0; iatom < 3; iatom++)
-	{
-		atom_combined[iatom].zIndex =14;
-		atom_combined[iatom].z = 0.0f;
-		atom_combined[iatom].occupation = 1.0;
-		atom_combined[iatom].sigma = 0.085f;
-	}
-	for (auto iatom = 3; iatom < 6; iatom++)
+	for (auto iatom = 0; iatom < atom_combined.size(); iatom++)
 	{
 		atom_combined[iatom].zIndex = 14;
-		atom_combined[iatom].z = 2.0f;
+		atom_combined[iatom].z = 0.0f;
 		atom_combined[iatom].occupation = 1.0;
 		atom_combined[iatom].sigma = 0.085f;
 	}
 }
 void TEM()
 {
-	int row = 1024;
-	int col = 1024;
+	int row = 512;
+	int col = 512;
 	cudaEM::multislice_params<float> input_param;
 	input_param.simulation_type = cudaEM::eTEMST_HRTEM;
 	input_param.potential_type = cudaEM::ePT_Lobato_0_12;
 	input_param.phonon_model = cudaEM::ePM_Frozen_Phonon;
-	input_param.potential_slicing = cudaEM::ePS_dz_Proj;
+	input_param.enable_fine_slicing = true;
 	input_param.illumination_model = cudaEM::eIM_Trans_Cross_Coef;
-	input_param.temporal_spatial_incoh = cudaEM::eTSI_Temporal;
+	input_param.temporal_spatial_incoh = cudaEM::eTSI_Temporal_Spatial;
 	/******************Phonon settings**********************/
 	input_param.pn_nconf = 100;
 	input_param.E_0 = 200;
 	input_param.pn_dim = cudaEM::FP_Dim(true, true, true);
 	/*******************Atom settings************************/
 	direct_xyzreader(input_param.input_atom_coordinates);
-	input_param.is_crystal = true;
+	input_param.is_crystal = false;
 	input_param.slice_interval = 0.5;
 	input_param.specimen_ratation = false;
-	input_param.blank_ratio = 0.1;
+	input_param.blank_ratio = 1.0;
 	/**********************Grid settings**************************/
 	input_param.img_col = col;
 	input_param.img_row = row;
 	input_param.GPU_num = 1;
 	/****************initialize the input params******************/
 	input_param.obj_lens.c_10 = 0;
-	input_param.obj_lens.outer_aper_ang = 0.030;
+	input_param.obj_lens.outer_aper_ang = 0.0f;
 	input_param.obj_lens.dsf_sigma = 30.0;
-	input_param.obj_lens.ssf_sigma = 5.0;
-	input_param.obj_lens.dsf_npoints = 30;
-	input_param.obj_lens.ssf_npoints = 16;
+	input_param.obj_lens.ssf_beta = 0.001f;
+	input_param.obj_lens.dsf_npoints = 128;
+	input_param.obj_lens.ssf_npoints = 8;
 	/************************************************************/
 	input_param.validate_parameters();
 	input_param.initial_OL();
@@ -106,7 +89,7 @@ void Thickness()
 	input_param.simulation_type = cudaEM::eTEMST_CBED;
 	input_param.potential_type = cudaEM::ePT_Kirkland_0_12;
 	input_param.phonon_model = cudaEM::ePM_Frozen_Phonon;
-	input_param.potential_slicing = cudaEM::ePS_dz_Proj;
+	input_param.enable_fine_slicing = false;
 	input_param.illumination_model = cudaEM::eIM_Trans_Cross_Coef;
 	input_param.temporal_spatial_incoh = cudaEM::eTSI_Temporal;
 	/******************Phonon settings**********************/
@@ -128,9 +111,7 @@ void Thickness()
 	input_param.cond_lens.inner_aper_ang = 0.0;
 	input_param.cond_lens.outer_aper_ang = 0.030;
 	input_param.cond_lens.dsf_sigma = 3.0;
-	input_param.cond_lens.ssf_sigma = 5.0;
 	input_param.cond_lens.dsf_npoints = 16;
-	input_param.cond_lens.ssf_npoints = 16;
 	input_param.detector.resize(2);
 	input_param.detector.g_inner[0] = 15;
 	input_param.detector.g_outer[0] = 30;
@@ -162,11 +143,11 @@ void exitwave()
 	input_param.simulation_type = cudaEM::eTEMST_HRTEM;
 	input_param.potential_type = cudaEM::ePT_Lobato_0_12;
 	input_param.phonon_model = cudaEM::ePM_Frozen_Phonon;
-	input_param.potential_slicing = cudaEM::ePS_dz_Proj;
+	input_param.enable_fine_slicing = false;
 	input_param.illumination_model = cudaEM::eIM_Trans_Cross_Coef;
 	input_param.temporal_spatial_incoh = cudaEM::eTSI_Temporal;
 	//save the exit wave.
-	input_param.data_record = eWave;
+	input_param.data_record = cudaEM::eWave;
 	/******************Phonon settings**********************/
 	input_param.pn_nconf = 100;
 	input_param.E_0 = 200;
@@ -185,9 +166,7 @@ void exitwave()
 	input_param.obj_lens.c_10 = -81.0;
 	input_param.obj_lens.outer_aper_ang = 0.080;
 	input_param.obj_lens.dsf_sigma = 10.0;
-	input_param.obj_lens.ssf_sigma = 5.0;
 	input_param.obj_lens.dsf_npoints = 30;
-	input_param.obj_lens.ssf_npoints = 16;
 	/************************************************************/
 	input_param.validate_parameters();
 	input_param.initial_OL();
@@ -203,7 +182,7 @@ void STEM()
 	input_param.simulation_type = cudaEM::eTEMST_STEM;
 	input_param.potential_type = cudaEM::ePT_Lobato_0_12;
 	input_param.phonon_model = cudaEM::ePM_Frozen_Phonon;
-	input_param.potential_slicing = cudaEM::ePS_dz_Proj;
+	input_param.enable_fine_slicing = true;
 	input_param.illumination_model = cudaEM::eIM_Trans_Cross_Coef;
 	input_param.temporal_spatial_incoh = cudaEM::eTSI_Temporal;
 	/******************Phonon settings**********************/
@@ -213,7 +192,7 @@ void STEM()
 	/*******************Atom settings************************/
 	phonon_builder(input_param.input_atom_coordinates);
 	input_param.is_crystal = false;
-	input_param.slice_interval = 0.4f;
+	input_param.slice_interval = 1.0;
 	input_param.specimen_ratation = false;
 	/**********************Grid settings**************************/
 	input_param.GPU_num = 1;
@@ -222,10 +201,6 @@ void STEM()
 	input_param.cond_lens.c_30 = 0.0f;
 	input_param.cond_lens.inner_aper_ang = 0.0f;
 	input_param.cond_lens.outer_aper_ang = 0.03f;
-	input_param.cond_lens.dsf_sigma = 3.0f;
-	input_param.cond_lens.ssf_sigma = 5.0f;
-	input_param.cond_lens.dsf_npoints = 16;
-	input_param.cond_lens.ssf_npoints = 16;
 
 	input_param.detector.resize(3);
 	input_param.detector.g_inner[0] = 15;
@@ -265,9 +240,9 @@ void STEM()
 	memcpy(ABF_data.data(),
 		&output_data.STEM_intensity[0],
 		pixel_num * sizeof(float));
-	cudaEM::EMdata_IO rawSaver("D:/STEM1P" + std::to_string(0) + "a.h5", "silicon");
+	cudaEM::EMdata_IO rawSaver("D:/goldSTEM.h5", "gold");
 	rawSaver.create_file();
-	rawSaver.write_STEM_data(row, col, HAADF_data, LAADF_data, ABF_data);
+	rawSaver.write_STEM_data(row, col,HAADF_data, LAADF_data, ABF_data);
 }
 int main()
 {
