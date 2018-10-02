@@ -13,7 +13,7 @@ cd build
 make all
 ./cudaEM
 Then you can run compiled cudaEM 
-[Link](url) and ![Image](https://github.com/ningustc/cudaEM/blob/master/LAADF.bmp)
+[Link](url) and ![LAADF.bmp](https://github.com/ningustc/cudaEM/blob/master/LAADF.bmp)
 ```
 
 For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
