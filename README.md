@@ -4,6 +4,8 @@ cudaEM is a cross platfrom Multi-GPU based package used for multislice simulatio
 This package has no other dependance except for CUFFT library. 
 In linux and Mac OS, the CUFFT callback functions are available after statically linking to cufft-static library.
 In Windows OS, the CUFFT callback functions are disabled due to the lack of static libraries under Windows platfrom.
+
+
 ![alt text](https://github.com/ningustc/cudaEM/blob/master/LAADF.bmp)
 ### Markdown
 
