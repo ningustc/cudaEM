@@ -1,12 +1,11 @@
 ## Welcome to GitHub Pages
 
-You can use the [editor on GitHub](https://github.com/ningustc/cudaEM/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
-
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+cudaEM is a cross platfrom Multi-GPU based package used for multislice simulation. This package eliminates the bandwidth limit of GPU RAM with CUFFTCallback, and makes full use the computation power of CUDA Cores. 
+This package has no other dependance except for CUFFT library. 
+In linux and Mac OS, the CUFFT callback functions are available after statically linking to cufft-static library.
+In Windows OS, the CUFFT callback functions are disabled due to the lack of static libraries under Windows platfrom.
 
 ### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
 
 ```markdown
 Installation on Linux and Mac
