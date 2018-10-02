@@ -4,7 +4,7 @@ cudaEM is a cross platfrom Multi-GPU based package used for multislice simulatio
 This package has no other dependance except for CUFFT library. 
 In linux and Mac OS, the CUFFT callback functions are available after statically linking to cufft-static library.
 In Windows OS, the CUFFT callback functions are disabled due to the lack of static libraries under Windows platfrom.
-
+![alt text](https://github.com/ningustc/cudaEM/blob/master/LAADF.bmp)
 ### Markdown
 
 ```markdown
@@ -13,7 +13,6 @@ cd build
 make all
 ./cudaEM
 Then you can run compiled cudaEM 
-[Link](url) and ![LAADF.bmp](https://github.com/ningustc/cudaEM/blob/master/LAADF.bmp)
 ```
 
 For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
@@ -25,3 +24,4 @@ Your Pages site will use the layout and styles from the Jekyll theme you have se
 ### Support or Contact
 
 Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+
