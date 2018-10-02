@@ -17,7 +17,14 @@ make all
 Then you can run compiled cudaEM 
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+```markdown
+Installation on windows
+please install CMake GUI version and add the CMakeList.text. 
+Do remember add the cuda directory into your environmental variables.
+
+Then you can run compiled cudaEM with Visual Studio or QT
+```
+
 
 ### Jekyll Themes
 
@@ -25,5 +32,5 @@ Your Pages site will use the layout and styles from the Jekyll theme you have se
 
 ### Support or Contact
 
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+msens@nus.edu.sg
 
